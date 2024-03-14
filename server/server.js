@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require('express');
-const bodyParser = require('body-parser');
+//const bodyParser = require('body-parser');
 const cors = require("cors");
 const mongoose = require('mongoose');
 
@@ -11,9 +11,12 @@ app.use(cors());
 app.use(express.json());
 
 // Connect to MongoDB
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.f387jr1.mongodb.net/`, {});
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.f387jr1.mongodb.net/?retryWrites=true&w=majority`, {});
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once("open", () => {
+    console.log("Connected to MongoDB!");
+});
 
 // Define routes
 //app.use('/api/bookings', require('./routes/bookingRoutes'));
