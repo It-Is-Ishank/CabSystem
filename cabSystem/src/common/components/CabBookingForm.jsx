@@ -52,49 +52,46 @@ const CabBookingForm = () => {
   return (
     <div>
       <h2>Cab Booking</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label htmlFor="sourceLocation">Source Location:</label>
-          <input
-            type="text"
-            id="sourceLocation"
-            value={sourceLocation}
-            onChange={handleSourceLocationChange}
-            required
-          />
+          <select {...register('source', { required: true })}>
+            <option value="">Select source</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+          </select>
         </div>
         <div>
           <label htmlFor="destinationLocation">Destination Location:</label>
-          <input
-            type="text"
-            id="destinationLocation"
-            value={destinationLocation}
-            onChange={handleDestinationLocationChange}
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={handleEmailChange}
-            required
-          />
+          <select {...register('destination', { required: true })}>
+            <option value="">Select destination</option>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+            <option value="E">E</option>
+            <option value="F">F</option>
+          </select>
         </div>
         <div>
           <label htmlFor="startTime">Start Time:</label>
-          <input
-            type="datetime-local"
+          <DatePicker
+            selected={startTime}
+            onChange={date => setStartTime(date)} // Properly update startTime
+            showTimeSelect
+            timeFormat="HH:mm"
+            timeIntervals={15}
+            timeCaption="Time"
+            dateFormat="dd-MM-yyyy HH:mm"
             id="startTime"
-            value={startTime}
-            onChange={handleStartTimeChange}
             required
           />
         </div>
-        
-        <button type="submit">Book Cab</button>
+        <button type="submit">Next</button>
       </form>
     </div>
   );

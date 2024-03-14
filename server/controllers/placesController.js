@@ -63,16 +63,19 @@ const adjacencyList = {
     }
   
     // Return both the shortest path and the minimum time
+    console.log(shortestPath,times[end])
     return { shortestPath, minTime: times[end] };
   }
 
-exports.getShortestPath = (req, res) => {
+  exports.getShortestPath = (req, res) => {
     try {
-        const { start, end } = req.params;
+        const start = req.params.start;
+        const end = req.params.end;
+        console.log(start, end);
         const shortestPath = dijkstra(start, end);
         res.status(200).json({ shortestPath });
-      } catch (error) {
+    } catch (error) {
         res.status(500).json({ error: error.message });
-      }
+    }
 };
 
