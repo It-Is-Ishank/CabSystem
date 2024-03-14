@@ -14,16 +14,19 @@ const adjacencyList = {
   // Dijkstra's algorithm to find the shortest path
   function dijkstra(start, end) {
     const distances = {};
+    const times = {}; // Add times object to store minimum time to reach each place
     const visited = {};
     const path = {};
   
-    // Initialize distances, visited, and path
+    // Initialize distances, times, visited, and path
     for (let place in adjacencyList) {
       distances[place] = Infinity;
+      times[place] = Infinity; // Initialize all times to Infinity initially
       visited[place] = false;
       path[place] = null;
     }
     distances[start] = 0;
+    times[start] = 0; // Set the time to reach the start place to 0
   
     // Dijkstra's algorithm
     for (let i = 0; i < Object.keys(adjacencyList).length; i++) {
@@ -42,8 +45,10 @@ const adjacencyList = {
   
       for (let neighbor of adjacencyList[current]) {
         const distance = distances[current] + neighbor.time;
+        const time = times[current] + neighbor.time; // Calculate the time to reach the neighbor place
         if (distance < distances[neighbor.place]) {
           distances[neighbor.place] = distance;
+          times[neighbor.place] = time; // Update the time to reach the neighbor place
           path[neighbor.place] = current;
         }
       }
@@ -57,13 +62,14 @@ const adjacencyList = {
       current = path[current];
     }
   
-    return shortestPath;
-  };
+    // Return both the shortest path and the minimum time
+    return { shortestPath, minTime: times[end] };
+  }
 
-exports.getShortedistance = (req, res) => {
+exports.getShortestPath = (req, res) => {
     try {
-        const { start, dest } = req.params;
-        const shortestPath = dijkstra(start, dest);
+        const { start, end } = req.params;
+        const shortestPath = dijkstra(start, end);
         res.status(200).json({ shortestPath });
       } catch (error) {
         res.status(500).json({ error: error.message });
