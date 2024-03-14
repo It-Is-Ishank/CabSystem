@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 
 const CabBookingForm = () => {
   const [sourceLocation, setSourceLocation] = useState('');
@@ -15,9 +16,9 @@ const CabBookingForm = () => {
   };
 
   const handleStartTimeChange = (e) => {
-    const selectedTime = new Date(e.target.value);
-    const currentTime = new Date();
-    if (selectedTime < currentTime) {
+    const selectedTime = moment(e.target.value);
+    const currentTime = moment();
+    if (selectedTime.isBefore(currentTime)) {
       alert('Please select a future date and time.');
       return;
     }
@@ -35,8 +36,18 @@ const CabBookingForm = () => {
     console.log('Destination Location:', destinationLocation);
     console.log('Start Time:', startTime);
     console.log('Email:', email);
-    // You can perform further actions like sending data to backend or API call
-  };
+    
+    const startTimeMoment = moment(startTime, 'YYYY-MM-DDTHH:mm');
+
+    // Add 32 minutes to the Moment object
+    const newTimeMoment = startTimeMoment.add(32, 'minutes');
+
+    // Format the updated Moment object back to a string
+    const newStartTime = newTimeMoment.format('YYYY-MM-DDTHH:mm');
+
+    console.log('Updated Start Time:', newStartTime);
+    
+};
 
   return (
     <div>

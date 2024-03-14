@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const cabSchema = new mongoose.Schema({
   type: { type: String, required: true },
-  isBooked: { type: Boolean, default: false },
+  ppm : {type: Number,required: true},
   bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }]
 });
 

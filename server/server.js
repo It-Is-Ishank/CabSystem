@@ -20,7 +20,7 @@ db.once("open", () => {
 
 // Define routes
 //app.use('/api/bookings', require('./routes/bookingRoutes'));
-//app.use('/api/cabs', require('./routes/cabRoutes'));
+app.use('/api/cabs', require('./routes/cabRoutes'));
 app.use('/api/places', require('./routes/placesRoutes'));
 
 app.listen(PORT, () => {
