@@ -66,16 +66,16 @@ const Cabs = () => {
       </div>
 
       <section className="py-1 bg-blueGray-50">
-        <table className="min-w-full border-collapse">
+        <table className="min-w-full">
           <thead>
             <tr>
-              <th className="px-6 py-3 bg-blueGray-50 border-b-2 border-blueGray-200 text-left text-xs font-semibold text-blueGray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 bg-blueGray-50 text-left text-xs font-semibold text-blueGray-500 uppercase tracking-wider">
                 Cab Type
               </th>
-              <th className="px-6 py-3 bg-blueGray-50 border-b-2 border-blueGray-200 text-left text-xs font-semibold text-blueGray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 bg-blueGray-50 text-left text-xs font-semibold text-blueGray-500 uppercase tracking-wider">
                 Price per Mile
               </th>
-              <th className="px-6 py-3 bg-blueGray-50 border-b-2 border-blueGray-200 text-left text-xs font-semibold text-blueGray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 bg-blueGray-50 text-left text-xs font-semibold text-blueGray-500 uppercase tracking-wider">
                 Edit
               </th>
             </tr>
@@ -89,32 +89,30 @@ const Cabs = () => {
               </tr>
             ) : (
               cabs.map((cab, index) => (
-                <tr key={index} className="hover:bg-gray-100">
-                  <td className="px-6 py-4 border-b border-blueGray-200 whitespace-nowrap">
+                <tr key={index}>
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {editedCab.originalType === cab.type ? (
                       <input
                         type="text"
                         value={editedCab.type}
                         onChange={(e) => setEditedCab({ ...editedCab, type: e.target.value })}
-                        className="border border-blueGray-300 px-2 py-1 rounded-md w-full"
                       />
                     ) : (
                       cab.type
                     )}
                   </td>
-                  <td className="px-6 py-4 border-b border-blueGray-200 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {editedCab.originalType === cab.type ? (
                       <input
                         type="text"
                         value={editedCab.ppm}
                         onChange={(e) => setEditedCab({ ...editedCab, ppm: e.target.value })}
-                        className="border border-blueGray-300 px-2 py-1 rounded-md w-full"
                       />
                     ) : (
                       cab.ppm
                     )}
                   </td>
-                  <td className="px-6 py-4 border-b border-blueGray-200 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     {editedCab.originalType === cab.type ? (
                       <>
                         <button
@@ -124,7 +122,7 @@ const Cabs = () => {
                           Save
                         </button>
                         <button
-                          className="bg-red hover:text-red"
+                          className="text-red-600 hover:text-red-900"
                           onClick={() => setEditedCab({ type: '', ppm: '', originalType: '' })}
                         >
                           Cancel
