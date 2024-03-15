@@ -20,7 +20,7 @@ const Cabs = () => {
 
   const fetchCabs = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/cabs/getCabs");
+      const response = await fetch("/api/cabs/getCabs");
       if (!response.ok) {
         throw new Error("Failed to fetch cabs");
       }
@@ -40,7 +40,7 @@ const Cabs = () => {
   const saveChanges = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/cabs/editCab/${editedCab.originalType}`, // Use original type here
+        `/api/cabs/editCab/${editedCab.originalType}`, // Use original type here
         {
           method: "PATCH",
           headers: {
@@ -113,8 +113,14 @@ const Cabs = () => {
                   <td>
                     {editedCab.originalType === cab.type ? (
                       <>
-                        <button className="save-button" onClick={() => saveChanges()}>Save</button>
-                        <button className="cancel-button"
+                        <button
+                          className="save-button"
+                          onClick={() => saveChanges()}
+                        >
+                          Save
+                        </button>
+                        <button
+                          className="cancel-button"
                           onClick={() =>
                             setEditedCab({
                               type: "",
@@ -127,7 +133,12 @@ const Cabs = () => {
                         </button>
                       </>
                     ) : (
-                      <button className="edit-button"onClick={() => handleEdit(cab)}>Edit</button>
+                      <button
+                        className="edit-button"
+                        onClick={() => handleEdit(cab)}
+                      >
+                        Edit
+                      </button>
                     )}
                   </td>
                 </tr>
