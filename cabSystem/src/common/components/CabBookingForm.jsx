@@ -1,12 +1,19 @@
 import React, { useState } from "react";
 import Graph from "./Graph";
 import "./CabBookingForm.css";
+import moment from "moment";
+
+const locations = ["A", "B", "C", "D", "E", "F"];
 
 const CabBookingForm = () => {
   const [sourceLocation, setSourceLocation] = useState("");
   const [destinationLocation, setDestinationLocation] = useState("");
   const [startTime, setStartTime] = useState("");
   const [email, setEmail] = useState("");
+  const [cabOptions, setCabOptions] = useState([]);
+  const [showCabOptions, setShowCabOptions] = useState(false);
+  const [time, setTime] = useState(null);
+  const [bookedCab, setBookedCab] = useState(null); // State variable for booked cab type
 
   const handleSourceLocationChange = (e) => {
     setSourceLocation(e.target.value);
@@ -17,9 +24,9 @@ const CabBookingForm = () => {
   };
 
   const handleStartTimeChange = (e) => {
-    const selectedTime = new Date(e.target.value);
-    const currentTime = new Date();
-    if (selectedTime < currentTime) {
+    const selectedTime = moment(e.target.value);
+    const currentTime = moment();
+    if (selectedTime.isBefore(currentTime)) {
       alert("Please select a future date and time.");
       return;
     }
@@ -30,56 +37,132 @@ const CabBookingForm = () => {
     setEmail(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleCabSelect = (e) => {
+    const selectedCabType = e.target.value;
+    setBookedCab(selectedCabType); // Set the booked cab type
+  };
+
+  const handleBooking = async () => {
+    if (!bookedCab) {
+      alert("No cab has been selected yet.");
+      return;
+    }
+  
+    const startTimeUTC = moment(startTime).toISOString(); // Convert start time to UTC format
+    const endTimeUTC = moment(startTime).add(time, 'minutes').toISOString(); // Calculate end time and convert to UTC format
+  
+    // Make a POST request to book the cab
+    try {
+      const response = await fetch("http://localhost:5000/api/bookings/book-cab", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cabType: bookedCab,
+          startTime: startTimeUTC,
+          endTime: endTimeUTC,
+          minTime: time,
+          email,
+          source: sourceLocation,
+          destination: destinationLocation
+        }),
+      });
+  
+      // Handle response
+      if (response.ok) {
+        // Handle success
+        alert("Cab booked successfully!");
+      } else {
+        // Handle failure
+        alert("Failed to book the cab. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error booking cab:", error);
+      alert("An error occurred while booking the cab. Please try again later.");
+    }
+  };
+  
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you can implement your logic for booking the cab
-    console.log("Source Location:", sourceLocation);
-    console.log("Destination Location:", destinationLocation);
-    console.log("Start Time:", startTime);
-    console.log("Email:", email);
 
-    // Parse the startTime string into a Date object
-    const startTimeDate = new Date(startTime);
-
-    // Check if startTimeDate is a valid Date object
-    if (isNaN(startTimeDate.getTime())) {
-      console.error("Invalid start time:", startTime);
-      return; // Exit the function if startTime is not a valid Date object
+    if (sourceLocation === destinationLocation) {
+      alert("Source and destination locations cannot be the same.");
+      return;
     }
 
-    console.log("Parsed Start Time:", startTimeDate);
+    // Fetch minimum time from backend
+    const minTimeResponse = await fetch(
+      `http://localhost:5000/api/places/shortest-path/${sourceLocation}/${destinationLocation}`
+    );
+    const minTimeData = await minTimeResponse.json();
+    const minTime = minTimeData.shortestPath.minTime;
+    setTime(minTime); // Set the minimum time
 
-    const minutesToAdd = 32;
-    const newDate = new Date(startTimeDate.getTime() + minutesToAdd * 60000); // 60000 milliseconds in a minute
+    // Prepare the request body
+    const requestBody = {
+      startTime: moment(startTime).toISOString(),
+      endTime: moment(startTime).add(minTime, "minutes").toISOString(),
+    };
 
-    // Format the new date as a string
-    const formattedDate = newDate.toISOString();
+    // Fetch available cab options based on start and end time
+    const availCabsResponse = await fetch(
+      "http://localhost:5000/api/bookings/available-cabs",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
 
-    console.log("New Date:", formattedDate); // Output: "2024-03-15T00:10:00.000Z"
+    const availCabsData = await availCabsResponse.json();
+
+    // Update cab options state and show the select element
+    setCabOptions(availCabsData);
+    setShowCabOptions(true);
   };
 
   return (
     <>
-      <h2 className="top-heading">Cab Booking</h2>
+      <h2 className="top-heading text-blue">Cab Booking</h2>
       <div className="container">
         <div className="form-container">
           <form onSubmit={handleSubmit}>
             <label htmlFor="sourceLocation">Source Location:</label>
-            <input
-              type="text"
+            <select
               id="sourceLocation"
               value={sourceLocation}
               onChange={handleSourceLocationChange}
               required
-            />
+            >
+              <option value="">Select Source Location</option>
+              {locations.map((location, index) => (
+                <option key={index} value={location}>
+                  {location}
+                </option>
+              ))}
+            </select>
+
             <label htmlFor="destinationLocation">Destination Location:</label>
-            <input
-              type="text"
+            <select
               id="destinationLocation"
               value={destinationLocation}
               onChange={handleDestinationLocationChange}
               required
-            />
+            >
+              <option value="">Select Destination Location</option>
+              {locations
+                .filter((loc) => loc !== sourceLocation)
+                .map((location, index) => (
+                  <option key={index} value={location}>
+                    {location}
+                  </option>
+                ))}
+            </select>
+
             <label htmlFor="email">Email:</label>
             <input
               type="email"
@@ -97,7 +180,25 @@ const CabBookingForm = () => {
               required
             />
 
-            <button type="submit">Book Cab</button>
+            <button type="submit">Check Available Cabs</button>
+            {showCabOptions && (
+              <div>
+                <div>
+                  <label>Cab Type Available</label>
+                  <select onChange={handleCabSelect}>
+                    <option value="">Select Available Cab</option>
+                    {cabOptions.map((cab, index) => (
+                      <option key={index} value={cab.type}>
+                        {cab.type} Price: {cab.ppm * parseInt(time)}{" "}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <button onClick={handleBooking}>Book Cab</button>
+                </div>
+              </div>
+            )}
           </form>
         </div>
         <div className="other-content">

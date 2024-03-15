@@ -1,0 +1,90 @@
+.cabs-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+  
+  .cabs-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    
+    font-size: 5rem;
+  }
+  
+  .cabs-form-container {
+    overflow-x: auto;
+  }
+  
+  .cabs-form-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+  
+  .cabs-form-table thead th {
+    background-color: #dec3c3;
+    color: #333;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .cabs-form-table tbody td {
+    text-align: center;
+    padding: 12px;
+    border: 1px solid #ddd;
+  }
+  
+  .cabs-form-table tbody tr:nth-child(even) {
+    background-color: #9b8787;
+  }
+  
+  .cabs-form-table tbody tr:hover {
+    background-color: #4f6a81;
+  }
+  
+  .cabs-form-table input[type="text"],input[type="number"] {
+    padding: 6px;
+    margin-bottom: 0.2rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .cabs-form-table button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cabs-form-table button:hover {
+    opacity: 0.9;
+  }
+  
+  button {
+    color: rgb(86, 75, 75);
+  }
+  .cancel-button{
+    background-color: rgb(236, 75, 43);
+  }
+  .save-button {
+    background-color: #30d038;
+  }
+  
+  button:hover {
+    background-color: #30d038;
+  }
+  
+  input[type="text"],
+  input[type="number"] {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 16px;
+    width: 90%;
+  }

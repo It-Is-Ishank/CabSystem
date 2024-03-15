@@ -46,13 +46,15 @@ label {
 
 input[type="text"],
 input[type="email"],
-input[type="datetime-local"] {
+input[type="datetime-local"],
+select {
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ccc; 
   border-radius: 4px; 
   font-size: 14px;
 }
+
 
 button {
   padding: 10px 0;

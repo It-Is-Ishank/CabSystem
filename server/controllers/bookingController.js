@@ -1,37 +1,80 @@
 const moment = require('moment-timezone');
 const Cab = require('../models/cab');
 const CabBooking = require('../models/cabBooking');
-const cab = require('../models/cab');
 
-const isConflicting = async (bookingId, nst, net) => {
+exports.deleteBooking = async (req, res) => {
+    const bookingId = req.params.id; // Assuming the booking ID is provided in the URL parameter
     try {
+        // Find the booking by ID
         const booking = await CabBooking.findById(bookingId);
+        
         if (!booking) {
-            console.log("Booking not found for ID:", bookingId);
-            return false;
+            return res.status(404).send("Booking not found");
         }
 
-        const startTime = moment(booking.startTime, 'YYYY-MM-DDTHH:mm');
-        const endTime = moment(booking.endTime, 'YYYY-MM-DDTHH:mm');
-
-       
-
-        if ((nst.isAfter(endTime) && net.isAfter(endTime)) || (nst.isBefore(startTime) && net.isBefore(startTime))) {
-            console.log("No conflict detected");
-            return false;
+        // Find the corresponding cab and remove the booking ID from its bookings array
+        const cab = await Cab.findOne({ type: booking.cabType });
+        if (cab) {
+            cab.bookings.pull(bookingId);
+            await cab.save();
+        } else {
+            return res.status(404).send("Corresponding cab not found");
         }
-        console.log("Conflict detected");
-        return true;
+
+        // Delete the booking
+        await CabBooking.findByIdAndDelete(bookingId);
+
+        return res.status(200).send("Booking deleted successfully");
     } catch (error) {
-        console.error("Error checking conflicting booking:", error);
-        throw error; // Rethrow the error to be handled in the calling function if needed
+        console.error("Error deleting booking:", error);
+        return res.status(500).send("Failed to delete booking");
     }
 };
+// Function to check for conflicts
+const isConflicting = async (cab, startTime, endTime) => {
+    try {
+        // Loop through existing bookings
+        for (const bookingId of cab.bookings) {
+            const booking = await CabBooking.findById(bookingId);
+            if (!booking) {
+                return false;
+            }
+
+            const bookingStartTime = moment.utc(booking.startTime);
+            const bookingEndTime = moment.utc(booking.endTime);
+
+            // Log details of comparison
+            console.log("Booking Start Time:", bookingStartTime.format());
+            console.log("Booking End Time:", bookingEndTime.format());
+            console.log("Input Start Time:", startTime.format());
+            console.log("Input End Time:", endTime.format());
+
+            // Check for conflicts
+            if(
+                !(startTime.isBefore(bookingStartTime) && endTime.isBefore(bookingStartTime)) &&
+                !(startTime.isAfter(bookingEndTime) && endTime.isAfter(bookingEndTime))
+            ) {
+                console.log("Conflict detected");
+                return true;
+            }
+        }
+        console.log("No conflicts found");
+        return false; // No conflicts found
+    } catch (error) {
+        console.error("Error checking conflicting booking:", error);
+        throw error;
+    }
+};
+
 
 exports.availableCabs = async (req, res) => {
     const { startTime , endTime } = req.body;
     try {
+        // Parse start and end times in the appropriate time zone
+        const startTimeMoment = moment(startTime).utc();
+        const endTimeMoment = moment(endTime).utc();
        
+        // Find all cabs
         const cabs = await Cab.find();
 
         if (!cabs || cabs.length === 0) {
@@ -39,19 +82,11 @@ exports.availableCabs = async (req, res) => {
             return res.status(500).send("No cabs found");
         }
 
+        // Filter available cabs based on conflicting bookings
         const availableCabs = [];
         for (const cab of cabs) {
-            let isAvailable = true;
-
-    
-            // Check for conflicting bookings
-            for (const bookingId of cab.bookings) {
-                if (await isConflicting(bookingId, moment(startTime, 'YYYY-MM-DDTHH:mm'), moment(endTime, 'YYYY-MM-DDTHH:mm'))) {
-                    isAvailable = false;
-                    break;
-                }
-            }
-            if (isAvailable) {
+            const conflicting = await isConflicting(cab, startTimeMoment, endTimeMoment);
+            if (!conflicting) {
                 availableCabs.push(cab);
             }
         }
@@ -60,53 +95,78 @@ exports.availableCabs = async (req, res) => {
         return res.status(200).json(availableCabs);
     } catch (err) {
         console.error("Error in availableCabs function:", err);
-        return res.status(500).json({error : err});
+        return res.status(500).json({error : err.message});
+    }
+}
+
+exports.getAllBookings = async (req,res) => {
+    try{
+      const bookings = await CabBooking.find();
+      res.status(200).json(bookings);
+    }catch (err)  {
+      console.log(err);
+      res.status(500).json({error : "Internal server error"});
+    }
+  }
+
+exports.getBooking = async (req,res) => {
+    const bookingId = req.params.id;
+    try {
+        const booking = await CabBooking.findById(bookingId);
+        if(!booking){
+            res.status(404).send('The Booking was not found');
+        return;
+        }else{
+            console.log(moment.tz(booking.startTime, 'YYYY-MM-DDTHH:mm','Asia/Kolkata'),booking.endTime)
+            res.status(200).json(booking);
+        }
+    } catch (error) {
+        res.status(500).send("Internal Server Error");
+        console.log(error);
     }
 }
 
 exports.bookCab = async (req, res) => {
     const { cabType, startTime, minTime, email, source, destination } = req.body;
-    
-    // Parse startTime in Indian Standard Time (IST)
-    const startTimeIST = moment.tz(startTime, 'YYYY-MM-DDTHH:mm', 'Asia/Kolkata');
-    // Add minTime to startTime to calculate endTime
-    const endTimeIST = startTimeIST.clone().add(minTime, 'minutes');
 
-    
-
-    // Find cabs of the specified type
-    const cab = await Cab.findOne({ type: cabType });
-    if (!cab) {
-        return res.status(404).send("No cabs found of type " + cabType);
-    }
-
-    // Check for conflicting bookings
-    const conflictingBooking = cab.bookings.find((b) => isConflicting(b, startTimeIST, endTimeIST));
-    if (conflictingBooking) {
-        return res.status(409).send("Conflicting booking");
-    }
-    
-    // Create a new booking
-    const newBooking = new CabBooking({
-        cabType,
-        startTime: startTimeIST.toISOString(), // Convert startTime to UTC string format
-        endTime: endTimeIST.toISOString(), // Convert endTime to UTC string format
-        email,
-        source,
-        destination
-    });
-
-    console.log("New Booking:", newBooking);
-
-    // Save the new booking
     try {
-        const savedBooking = await newBooking.save();
-        cab.bookings.push(savedBooking._id);
+        // Parse start time and calculate end time
+        const startTimeMoment = moment(startTime);
+        const endTimeMoment = startTimeMoment.clone().add(minTime, 'minutes');
+
+        // Find cab of the specified type
+        const cab = await Cab.findOne({ type: cabType });
+        if (!cab) {
+            return res.status(404).send("No cabs found of type " + cabType);
+        }
+
+        // Check for conflicting bookings
+        const isConflict = await isConflicting(cab, startTimeMoment, endTimeMoment);
+        if (isConflict) {
+            return res.status(409).send("Conflicting booking");
+        }
+
+        // Create a new booking
+        const newBooking = new CabBooking({
+            cabType,
+            startTime: startTimeMoment.toDate(),
+            endTime: endTimeMoment.toDate(),
+            email,
+            cost : cab.ppm * minTime,
+            source,
+            destination,
+            tripTime: minTime
+        });
+
+        // Save the new booking
+        await newBooking.save();
+        cab.bookings.push(newBooking._id);
         await cab.save();
+
         return res.status(201).send("Booking created successfully");
     } catch (error) {
         console.error("Error creating booking:", error);
         return res.status(500).send("Failed to create booking");
     }
-}
+};
 
