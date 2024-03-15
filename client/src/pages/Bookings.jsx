@@ -23,9 +23,7 @@ const Bookings = () => {
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/bookings/get-all-bookings"
-      );
+      const response = await fetch("/api/bookings/get-all-bookings");
       if (!response.ok) {
         throw new Error("Failed to fetch bookings");
       }
@@ -67,7 +65,7 @@ const Bookings = () => {
       });
       return;
     }
-  
+
     // Show confirmation popup
     Swal.fire({
       title: "Are you sure?",
@@ -81,7 +79,7 @@ const Bookings = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/bookings/delete-booking/${bookingId}`,
+            `/api/bookings/delete-booking/${bookingId}`,
             {
               method: "DELETE",
               headers: {
@@ -93,17 +91,13 @@ const Bookings = () => {
           if (!response.ok) {
             throw new Error("Failed to delete booking");
           }
-  
+
           // Remove the deleted booking from the local state
           setBookings((prevBookings) =>
             prevBookings.filter((booking) => booking._id !== bookingId)
           );
-  
-          Swal.fire(
-            "Deleted!",
-            "Your booking has been deleted.",
-            "success"
-          );
+
+          Swal.fire("Deleted!", "Your booking has been deleted.", "success");
         } catch (error) {
           console.error("Error deleting booking:", error);
           Swal.fire({
@@ -156,9 +150,7 @@ const Bookings = () => {
                     <td>
                       <button
                         style={{ backgroundColor: "red", color: "white" }}
-                        onClick={() =>
-                          handleDeleteBooking(booking._id, status)
-                        }
+                        onClick={() => handleDeleteBooking(booking._id, status)}
                       >
                         Delete
                       </button>

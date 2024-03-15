@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Graph from "./Graph";
 import "./CabBookingForm.css";
 import moment from "moment";
-import swal from 'sweetalert2';
+import swal from "sweetalert2";
 
 const locations = ["A", "B", "C", "D", "E", "F"];
 
@@ -59,13 +59,13 @@ const CabBookingForm = () => {
       alert("No cab has been selected yet.");
       return;
     }
-  
+
     const startTimeUTC = moment(startTime).toISOString(); // Convert start time to UTC format
-    const endTimeUTC = moment(startTime).add(time, 'minutes').toISOString(); // Calculate end time and convert to UTC format
-  
+    const endTimeUTC = moment(startTime).add(time, "minutes").toISOString(); // Calculate end time and convert to UTC format
+
     // Make a POST request to book the cab
     try {
-      const response = await fetch("http://localhost:5000/api/bookings/book-cab", {
+      const response = await fetch("/api/bookings/book-cab", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,10 +77,10 @@ const CabBookingForm = () => {
           minTime: time,
           email,
           source: sourceLocation,
-          destination: destinationLocation
+          destination: destinationLocation,
         }),
       });
-  
+
       // Handle response
       if (response.ok) {
         // Handle success
@@ -94,9 +94,7 @@ const CabBookingForm = () => {
       console.error("Error booking cab:", error);
       alert("An error occurred while booking the cab. Please try again later.");
     }
-
   };
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -108,7 +106,7 @@ const CabBookingForm = () => {
 
     // Fetch minimum time from backend
     const minTimeResponse = await fetch(
-      `http://localhost:5000/api/places/shortest-path/${sourceLocation}/${destinationLocation}`
+      `/api/places/shortest-path/${sourceLocation}/${destinationLocation}`
     );
     const minTimeData = await minTimeResponse.json();
     const minTime = minTimeData.shortestPath.minTime;
@@ -121,16 +119,13 @@ const CabBookingForm = () => {
     };
 
     // Fetch available cab options based on start and end time
-    const availCabsResponse = await fetch(
-      "http://localhost:5000/api/bookings/available-cabs",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const availCabsResponse = await fetch("/api/bookings/available-cabs", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
 
     const availCabsData = await availCabsResponse.json();
 
