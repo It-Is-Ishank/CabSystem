@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Graph from "./Graph";
 import "./CabBookingForm.css";
 import moment from "moment";
+import swal from 'sweetalert2';
 
 const locations = ["A", "B", "C", "D", "E", "F"];
 
@@ -14,6 +15,17 @@ const CabBookingForm = () => {
   const [showCabOptions, setShowCabOptions] = useState(false);
   const [time, setTime] = useState(null);
   const [bookedCab, setBookedCab] = useState(null); // State variable for booked cab type
+
+  const resetForm = () => {
+    setSourceLocation("");
+    setDestinationLocation("");
+    setStartTime("");
+    setEmail("");
+    setCabOptions([]);
+    setShowCabOptions(false);
+    setTime(null);
+    setBookedCab(null);
+  };
 
   const handleSourceLocationChange = (e) => {
     setSourceLocation(e.target.value);
@@ -72,7 +84,8 @@ const CabBookingForm = () => {
       // Handle response
       if (response.ok) {
         // Handle success
-        alert("Cab booked successfully!");
+        swal("Success", "Cab booked successfully!", "success");
+        resetForm();
       } else {
         // Handle failure
         alert("Failed to book the cab. Please try again later.");
@@ -81,6 +94,7 @@ const CabBookingForm = () => {
       console.error("Error booking cab:", error);
       alert("An error occurred while booking the cab. Please try again later.");
     }
+
   };
   
 

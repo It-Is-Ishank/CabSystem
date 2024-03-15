@@ -67,7 +67,7 @@ const Bookings = () => {
       });
       return;
     }
-
+  
     // Show confirmation popup
     Swal.fire({
       title: "Are you sure?",
@@ -84,17 +84,21 @@ const Bookings = () => {
             `http://localhost:5000/api/bookings/delete-booking/${bookingId}`,
             {
               method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ status }), // Include status in the request body
             }
           );
           if (!response.ok) {
             throw new Error("Failed to delete booking");
           }
-
+  
           // Remove the deleted booking from the local state
           setBookings((prevBookings) =>
             prevBookings.filter((booking) => booking._id !== bookingId)
           );
-
+  
           Swal.fire(
             "Deleted!",
             "Your booking has been deleted.",
