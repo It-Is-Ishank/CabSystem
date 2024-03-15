@@ -64,7 +64,7 @@ const adjacencyList = {
   
     // Return both the shortest path and the minimum time
     console.log(shortestPath,times[end])
-    return { shortestPath, minTime: times[end] };
+    return { path : shortestPath, minTime: times[end] };
   }
 
   exports.getShortestPath = (req, res) => {

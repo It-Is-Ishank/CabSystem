@@ -15,6 +15,7 @@ const CabBookingForm = () => {
   const [showCabOptions, setShowCabOptions] = useState(false);
   const [time, setTime] = useState(null);
   const [bookedCab, setBookedCab] = useState(null); // State variable for booked cab type
+  const [minTimeData, setMinTimeData] = useState({ shortestPath: { path: [], minTime: null } });
 
   const resetForm = () => {
     setSourceLocation("");
@@ -109,6 +110,8 @@ const CabBookingForm = () => {
       `/api/places/shortest-path/${sourceLocation}/${destinationLocation}`
     );
     const minTimeData = await minTimeResponse.json();
+    setMinTimeData(minTimeData); // Update minTimeData state
+
     const minTime = minTimeData.shortestPath.minTime;
     setTime(minTime); // Set the minimum time
 
@@ -211,7 +214,7 @@ const CabBookingForm = () => {
           </form>
         </div>
         <div className="other-content">
-          <Graph />
+          <Graph shortestPath={minTimeData.shortestPath.path}/>
         </div>
       </div>
     </>

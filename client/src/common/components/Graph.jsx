@@ -1,6 +1,15 @@
 import React from "react";
 
-const Graph = () => {
+const Graph = ({shortestPath}) => {
+  const { path } = shortestPath;
+
+  // Function to determine if an edge should be highlighted
+  const isHighlightedEdge = (node1, node2) => {
+    if (!shortestPath || !shortestPath.path) {
+      return false;
+    }
+    return shortestPath.path.includes(node1) && shortestPath.path.includes(node2);
+  };
   return (
     <svg
       width="497"
@@ -13,16 +22,16 @@ const Graph = () => {
         <path
           id="Line E-F"
           d="M352.5 267L400.561 211.336L448.622 155.673"
-          stroke="black"
+          stroke={isHighlightedEdge("E", "F") ? "yellow" : "black"}
         />
-        <path id="Line C-D" d="M147 267L249.5 152L352 37" stroke="black" />
+        <path id="Line C-D" d="M147 267L249.5 152L352 37" stroke={isHighlightedEdge("C", "D") ? "yellow" : "black"} />
         <line
           id="Line A-B"
           x1="51.6222"
           y1="136.673"
           x2="129.622"
           y2="46.6725"
-          stroke="black"
+          stroke={isHighlightedEdge("A", "B") ? "yellow" : "black"}
         />
         <line
           id="Line B-D"
@@ -30,7 +39,7 @@ const Graph = () => {
           y1="36.5"
           x2="351"
           y2="36.5"
-          stroke="black"
+          stroke={isHighlightedEdge("B", "D") ? "yellow" : "black"}
         />
         <line
           id="Line C-E"
@@ -38,11 +47,11 @@ const Graph = () => {
           y1="269.5"
           x2="363"
           y2="269.5"
-          stroke="black"
+          stroke={isHighlightedEdge("C", "E") ? "yellow" : "black"}
         />
-        <path id="Line A-C" d="M135.5 260.5L42 156.5" stroke="black" />
-        <path id="Line D-F" d="M456.867 152L363.367 48" stroke="black" />
-        <path id="Line B-E" d="M348 267L145 37.5" stroke="black" />
+        <path id="Line A-C" d="M135.5 260.5L42 156.5" stroke={isHighlightedEdge("A", "C") ? "yellow" : "black"} />
+        <path id="Line D-F" d="M456.867 152L363.367 48" stroke={isHighlightedEdge("D", "F") ? "yellow" : "black"} />
+        <path id="Line B-E" d="M348 267L145 37.5" stroke={isHighlightedEdge("B", "E") ? "yellow" : "black"} />
         <g id="Group A">
           <g id="Ellipse A" filter="url(#filter0_d_0_1)">
             <path
