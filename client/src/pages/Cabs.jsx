@@ -20,7 +20,7 @@ const Cabs = () => {
 
   const fetchCabs = async () => {
     try {
-      const response = await fetch("/api/cabs/getCabs");
+      const response = await fetch("https://myvahan-server.onrender.com/api/cabs/getCabs");
       if (!response.ok) {
         throw new Error("Failed to fetch cabs");
       }
@@ -40,7 +40,7 @@ const Cabs = () => {
   const saveChanges = async () => {
     try {
       const response = await fetch(
-        `/api/cabs/editCab/${editedCab.originalType}`, // Use original type here
+        `https://myvahan-server.onrender.com/api/cabs/editCab/${editedCab.originalType}`, // Use original type here
         {
           method: "PATCH",
           headers: {

@@ -66,7 +66,7 @@ const CabBookingForm = () => {
 
     // Make a POST request to book the cab
     try {
-      const response = await fetch("/api/bookings/book-cab", {
+      const response = await fetch("https://myvahan-server.onrender.com/api/bookings/book-cab", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -107,7 +107,7 @@ const CabBookingForm = () => {
 
     // Fetch minimum time from backend
     const minTimeResponse = await fetch(
-      `/api/places/shortest-path/${sourceLocation}/${destinationLocation}`
+      `https://myvahan-server.onrender.com/api/places/shortest-path/${sourceLocation}/${destinationLocation}`
     );
     const minTimeData = await minTimeResponse.json();
     setMinTimeData(minTimeData); // Update minTimeData state
@@ -122,7 +122,7 @@ const CabBookingForm = () => {
     };
 
     // Fetch available cab options based on start and end time
-    const availCabsResponse = await fetch("/api/bookings/available-cabs", {
+    const availCabsResponse = await fetch("https://myvahan-server.onrender.com/api/bookings/available-cabs", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

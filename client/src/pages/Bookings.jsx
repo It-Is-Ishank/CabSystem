@@ -23,7 +23,7 @@ const Bookings = () => {
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/bookings/get-all-bookings");
+      const response = await fetch("https://myvahan-server.onrender.com/api/bookings/get-all-bookings");
       if (!response.ok) {
         throw new Error("Failed to fetch bookings");
       }
@@ -79,7 +79,7 @@ const Bookings = () => {
       if (result.isConfirmed) {
         try {
           const response = await fetch(
-            `/api/bookings/delete-booking/${bookingId}`,
+            `https://myvahan-server.onrender.com/api/bookings/delete-booking/${bookingId}`,
             {
               method: "DELETE",
               headers: {
