@@ -62,17 +62,4 @@ exports.editCab = async (req, res) => {
   }
 };
 
-exports.addCab = async (req,res) => {
-  try {
-    const { cabType, ppm} = req.body
-    let newCab = new Cab ({
-      type: cabType,
-      ppm: ppm
-    });
-    await newCab.save()
-    res.status(201).send(newCab)
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({error : 'Server Error'});
-  }
-}
+

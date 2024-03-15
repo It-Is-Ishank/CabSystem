@@ -3,4 +3,4 @@ const router = express.Router();
 const bookingController = require('../controllers/bookingController')
 
 
-module.exports = router;
+module.export = router;

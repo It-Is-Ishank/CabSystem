@@ -15,7 +15,7 @@ const Graph = () => {
           d="M352.5 267L400.561 211.336L448.622 155.673"
           stroke="black"
         />
-        <path id="Line C-D" d="M147 267L249.5 152L352 37" stroke="yellow" />
+        <path id="Line C-D" d="M147 267L249.5 152L352 37" stroke="black" />
         <line
           id="Line A-B"
           x1="51.6222"
