@@ -1,9 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
-import "./Cabs.css";
-
-const MySwal = withReactContent(Swal);
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2"
 
 const Cabs = () => {
   const [cabs, setCabs] = useState([]);
@@ -13,6 +9,7 @@ const Cabs = () => {
     ppm: "",
     originalType: "",
   });
+  
 
   useEffect(() => {
     fetchCabs();
@@ -55,36 +52,38 @@ const Cabs = () => {
       if (!response.ok) {
         throw new Error("Failed to edit cab");
       }
-      MySwal.fire("Success", "Cab edited successfully", "success");
+      Swal.fire("Success", "Cab edited successfully", "success");
       fetchCabs();
       setEditedCab({ type: "", ppm: "", originalType: "" }); // Reset edited cab data
     } catch (error) {
       console.error("Error editing cab:", error);
-      MySwal.fire("Error", "Failed to edit cab", "error");
+      Swal.fire("Error", "Failed to edit cab", "error");
     }
   };
 
+  
+
   return (
-    <div className="cabs-container">
-      <h1 className="cabs-container-heading">All Cabs Edit Panel</h1>
-      <div className="cabs-form-container">
-        <table className="cabs-form-table">
+    <div className="max-w-7xl mx-auto px-8 py-8 " >
+      <h1 className="text-center text-5xl mb-6">All Cabs Edit Panel</h1>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border">
           <thead>
             <tr>
-              <th>Cab Type</th>
-              <th>Price per Minute</th>
-              <th>Edit</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Cab Type</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border cursor-pointer" >Price per Minute</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Edit</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan="3">Loading...</td>
+                <td colSpan="3" className="py-2 px-4 border">Loading...</td>
               </tr>
             ) : (
               cabs.map((cab, index) => (
-                <tr key={index}>
-                  <td>
+                <tr key={index} className={index % 2 === 0 ? "bg-gray-500 hover:bg-gray-400" : "bg-black hover:bg-gray-400"}>
+                  <td className="py-2 px-4 border">
                     {editedCab.originalType === cab.type ? (
                       <input
                         type="text"
@@ -92,12 +91,13 @@ const Cabs = () => {
                         onChange={(e) =>
                           setEditedCab({ ...editedCab, type: e.target.value })
                         }
+                        className="w-full border border-gray-300 rounded px-2 py-1"
                       />
                     ) : (
                       cab.type
                     )}
                   </td>
-                  <td>
+                  <td className="py-2 px-4 border">
                     {editedCab.originalType === cab.type ? (
                       <input
                         type="number"
@@ -105,22 +105,23 @@ const Cabs = () => {
                         onChange={(e) =>
                           setEditedCab({ ...editedCab, ppm: e.target.value })
                         }
+                        className="w-full border border-gray-300 rounded px-2 py-1"
                       />
                     ) : (
                       cab.ppm
                     )}
                   </td>
-                  <td>
+                  <td className="py-2 px-4 border">
                     {editedCab.originalType === cab.type ? (
                       <>
                         <button
-                          className="save-button"
+                          className="bg-green-500 text-white py-2 px-4 rounded mr-2"
                           onClick={() => saveChanges()}
                         >
                           Save
                         </button>
                         <button
-                          className="cancel-button"
+                          className="bg-red-500 text-white py-2 px-4 rounded"
                           onClick={() =>
                             setEditedCab({
                               type: "",
@@ -134,7 +135,7 @@ const Cabs = () => {
                       </>
                     ) : (
                       <button
-                        className="edit-button"
+                        className="bg-blue-500 text-white py-2 px-4 rounded"
                         onClick={() => handleEdit(cab)}
                       >
                         Edit
@@ -151,4 +152,4 @@ const Cabs = () => {
   );
 };
 
-export default Cabs;
+export default Cabs

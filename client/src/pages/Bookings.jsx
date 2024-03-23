@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "./Bookings.css";
 import Swal from "sweetalert2";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrent] = useState(new Date());
+  
 
   useEffect(() => {
     fetchBookings();
@@ -110,60 +110,75 @@ const Bookings = () => {
     });
   };
 
+  
+
   return (
-    <div className="bookings-container">
-      <h1 className="bookings-container-heading">All Bookings</h1>
-      <div className="bookings-table-container">
-        <table className="bookings-table">
+    <div className="max-w-7xl mx-auto px-8 py-8">
+      <h1 className="text-center text-5xl mb-6">All Bookings</h1>
+      <div className="flex justify-center mb-4">
+      <div className="flex justify-center items-center mb-2">
+  
+</div>
+
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border">
           <thead>
             <tr>
-              <th>Index</th>
-              <th>Email</th>
-              <th>Progress (%)</th>
-              <th>Status</th>
-              <th>Source</th>
-              <th>Destination</th>
-              <th>Start Date & Time</th>
-              <th>Delete</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Index</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Email</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Progress (%)</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Status</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Source</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Destination</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Start Date & Time</th>
+              <th className="bg-gray-300 text-gray-700 font-semibold text-uppercase py-2 px-4 border">Delete</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-gray-700">
             {isLoading ? (
               <tr>
-                <td colSpan="8">Loading...</td>
+                <td colSpan="8" className="py-2 px-4 border">Loading...</td>
               </tr>
             ) : (
-              bookings.map((booking, index) => {
-                const { progress, status } = calculateProgressAndStatus(
-                  booking.startTime,
-                  booking.endTime
-                );
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{booking.email}</td>
-                    <td>{progress}</td>
-                    <td>{status}</td>
-                    <td>{booking.source}</td>
-                    <td>{booking.destination}</td>
-                    <td>{new Date(booking.startTime).toLocaleString()}</td>
-                    <td>
-                      <button
-                        style={{ backgroundColor: "red", color: "white" }}
-                        onClick={() => handleDeleteBooking(booking._id, status)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
+              bookings.length > 0 ? (
+                bookings.map((booking, index) => {
+                  const { progress, status } = calculateProgressAndStatus(
+                    booking.startTime,
+                    booking.endTime
+                  );
+                  return (
+                    <tr key={index} className={index % 2 === 0 ? "bg-gray-500 hover:bg-gray-400" : "bg-black hover:bg-gray-400"}>
+                      <td className="py-2 px-4 border">{index + 1}</td>
+                      <td className="py-2 px-4 border">{booking.email}</td>
+                      <td className="py-2 px-4 border">{progress}</td>
+                      <td className="py-2 px-4 border">{status}</td>
+                      <td className="py-2 px-4 border">{booking.source}</td>
+                      <td className="py-2 px-4 border">{booking.destination}</td>
+                      <td className="py-2 px-4 border">{new Date(booking.startTime).toLocaleString()}</td>
+                      <td className="py-2 px-4 border">
+                        <button
+                          className="bg-red-500 text-white py-2 px-4 rounded"
+                          onClick={() => handleDeleteBooking(booking._id, status)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="8" className="py-2 px-4 border">No bookings found</td>
+                </tr>
+              )
             )}
           </tbody>
         </table>
       </div>
     </div>
   );
-};
+
+}
 
 export default Bookings;

@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 const Graph = ({shortestPath}) => {
-  const { path } = shortestPath;
-
+  const [path,setPath] = useState([])
+  
+  useEffect( ()=>{
+    setPath(shortestPath?.path)
+    console.log(shortestPath?.path)
+  },[shortestPath]);
+  
   // Function to determine if an edge should be highlighted
   const isHighlightedEdge = (node1, node2) => {
     if (!shortestPath || !shortestPath.path) {

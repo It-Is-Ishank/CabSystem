@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import Cabs from "../pages/Cabs";
 import Bookings from "../pages/Bookings";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
       {
         path: "/bookings",
         element : <Bookings/>
-      }
+      },
     ],
   },
 ]);
